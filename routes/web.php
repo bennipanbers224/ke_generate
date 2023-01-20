@@ -23,3 +23,7 @@ Route::resource('signature', SignatureController::class);
 
 Route::get('generate-pdf', [SignatureController::class, 'generatePDF']);
 
+Route::get('/toGenerate', [SignatureController::class, 'generateKey']);
+Route::get('/toVerify', [SignatureController::class, 'verify']);
+Route::post('/verify-file',[SignatureController::class, 'getVerificationResult']);
+

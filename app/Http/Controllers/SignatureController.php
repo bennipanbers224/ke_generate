@@ -20,6 +20,14 @@ class SignatureController extends Controller
         
     }
 
+    public function generateKey(){
+        return view("signature.signature");
+    }
+
+    public function verify(){
+        return view("signature.verify");
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -39,7 +47,7 @@ class SignatureController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:pdf,xlx,csv|max:2048',
+            'file' => 'required|mimes:pdf|max:2048',
         ]);
   
         $fileName = time().'.'.$request->file->extension();  
@@ -49,10 +57,47 @@ class SignatureController extends Controller
         $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
               
         $data = data::create([
-            'nama'=>$fileName,
-            'private_key'=>"iVBORw0KGgoAAAANSUhE"
+            'name'=>"Glesia Putra Silalahi",
+            'major'=>"Sistem Informasi",
+            'title'=>"Sarjana Komputer (S.Kom.)",
+            'predicate'=>"Sangat Memuaskan",
+            'graduation_date'=>"15 Agustus 2022",
+            'start_study'=>"2018/2019",
+            'nim'=>"14S18004",
+            'certificate_number'=>"202012022000360",
+            'image'=>$fileName,
+            'private_key'=>md5($fileName)
         ]);
-        return back()->with('success', 'success Full upload signature')->with('file',$fileName);
+        return back()->with('success', 'success for generate signature')->with('file',$fileName);
+    }
+
+    public function getVerificationResult(Request $request){
+        $request->validate([
+            'file' => 'required|mimes:pdf|max:2048',
+        ]);
+
+        $fileName = $request->file->getClientOriginalName().'.'.$request->file->extension();
+
+        $request->file->move(public_path('verify_file'), $fileName);
+
+        $pdfParser = new Parser();
+        $pdf = $pdfParser->parseFile(public_path('verify_file/'.$fileName));
+        $content = $pdf->getText();
+
+        $key = explode("====", $content);
+
+        // echo $key[0];
+
+        $data = data::where('private_key', '=', $key[0])->get();
+
+        // var_dump($data);
+
+        if(count($data)>0){
+            return back()->with('success', 'Your certificate is fully original')->with('file',$fileName)->with(compact('data'));
+        }
+        else{
+            return back()->with('error', 'Your certificate not fount for verification')->with('file',$fileName)->with(compact('data'));
+        }
     }
 
     /**
@@ -112,13 +157,13 @@ class SignatureController extends Controller
             $size = $fpdi->getTemplateSize($template);
             $fpdi->AddPage($size['orientation'], array($size['width'], $size['height']));
             $fpdi->useTemplate($template);
-              
-            $fpdi->SetFont("helvetica", "", 15);
-            $fpdi->SetTextColor(153,0,153);
+            
+            $fpdi->SetFont("arial", "", 15);
+            $fpdi->SetTextColor(0,0,0);
 
             $left = 10;
             $top = 10;
-            $text = "====Key Generate : ".md5($fileName)."====";
+            $text = md5($fileName)."====";
             $fpdi->Text($left,$top,$text);
         }
   

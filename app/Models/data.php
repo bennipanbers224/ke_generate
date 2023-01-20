@@ -12,7 +12,15 @@ class data extends Model
     protected $table = 'data';
 
     protected $fillable = [
-        'nama',
+        'name',
+        'major',
+        'title',
+        'predicate',
+        'graduation_date',
+        'start_study',
+        'nim',
+        'certificate_number',
+        'image',
         'private_key'
     ];
 }

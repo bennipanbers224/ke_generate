@@ -15,7 +15,15 @@ class CreateDataTable extends Migration
     {
         Schema::create('data', function (Blueprint $table) {
             $table->id();
-            $table->string("nama");
+            $table->string("name");
+            $table->string("certificate_number");
+            $table->string("major");
+            $table->string("title");
+            $table->string("predicate");
+            $table->string("graduation_date");
+            $table->string("start_study");
+            $table->string("nim");
+            $table->string("image");
             $table->string("private_key");
             $table->timestamps();
         });
