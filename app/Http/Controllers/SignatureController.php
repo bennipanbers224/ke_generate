@@ -7,6 +7,8 @@ use App\Models\data;
 use Smalot\PdfParser\Parser;
 use setasign\Fpdi\Fpdi;
 use PDF;
+use Illuminate\Support\Facades\Hash;
+use phpseclib\Crypt\RSA;
 
 class SignatureController extends Controller
 {
@@ -163,8 +165,12 @@ class SignatureController extends Controller
 
             $left = 10;
             $top = 10;
-            $text = md5($fileName)."====";
-            $fpdi->Text($left,$top,$text);
+            $text = Hash::make($fileName)."====";
+            $rsa = new RSA();
+            $keys = $rsa->createKey(4096);
+            $publicKey = $keys['publickey'];
+            $privateKey = $keys['privatekey'];
+            $fpdi->Text($left,$top,$publicKey);
         }
   
         return $fpdi->Output($outputFilePath, 'F');
