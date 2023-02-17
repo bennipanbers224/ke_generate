@@ -166,11 +166,11 @@ class SignatureController extends Controller
             $left = 10;
             $top = 10;
             $text = Hash::make($fileName)."====";
-            $rsa = new RSA();
-            $keys = $rsa->createKey(4096);
-            $publicKey = $keys['publickey'];
-            $privateKey = $keys['privatekey'];
-            $fpdi->Text($left,$top,$publicKey);
+            // $rsa = new RSA();
+            // $keys = $rsa->createKey(4096);
+            // $publicKey = $keys['publickey'];
+            // $privateKey = $keys['privatekey'];
+            $fpdi->Text($left,$top,$text);
         }
   
         return $fpdi->Output($outputFilePath, 'F');
