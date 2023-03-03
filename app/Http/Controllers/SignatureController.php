@@ -73,7 +73,8 @@ class SignatureController extends Controller
             'nim'=>"14S18004",
             'certificate_number'=>"202012022000360",
             'image'=>$fileName,
-            'private_key'=>$privateKey
+            'private_key'=>$privateKey,
+            'public_key'=>$publicKey
         ]);
         return back()->with('success', 'success for generate signature')->with('file',$fileName);
     }

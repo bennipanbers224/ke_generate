@@ -25,6 +25,7 @@ class CreateDataTable extends Migration
             $table->string("nim");
             $table->string("image");
             $table->string("private_key");
+            $table->string("public_key");
             $table->timestamps();
         });
     }
