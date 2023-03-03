@@ -56,7 +56,12 @@ class SignatureController extends Controller
    
         $request->file->move(public_path('upload'), $fileName);
 
-        $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
+        $rsa = new \Crypt_RSA();
+        $keys = $rsa->createKey(4096);
+        $publicKey = $keys['publickey'];
+        $privateKey = $keys['privatekey'];
+
+        $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName, $privateKey);
               
         $data = data::create([
             'name'=>"Glesia Putra Silalahi",
@@ -68,7 +73,7 @@ class SignatureController extends Controller
             'nim'=>"14S18004",
             'certificate_number'=>"202012022000360",
             'image'=>$fileName,
-            'private_key'=>md5($fileName)
+            'private_key'=>$privateKey
         ]);
         return back()->with('success', 'success for generate signature')->with('file',$fileName);
     }
@@ -147,7 +152,7 @@ class SignatureController extends Controller
         //
     }
 
-    public function fillPDFFile($file, $outputFilePath, $fileName)
+    public function fillPDFFile($file, $outputFilePath, $fileName, $privateKey)
     {
         $fpdi = new FPDI;
           
@@ -160,19 +165,24 @@ class SignatureController extends Controller
             $fpdi->AddPage($size['orientation'], array($size['width'], $size['height']));
             $fpdi->useTemplate($template);
             
-            $fpdi->SetFont("arial", "", 15);
+            $fpdi->SetFont("arial", "", 2);
             $fpdi->SetTextColor(0,0,0);
 
             $left = 10;
             $top = 10;
-            $text = Hash::make($fileName)."====";
-            // $rsa = new RSA();
-            // $keys = $rsa->createKey(4096);
-            // $publicKey = $keys['publickey'];
-            // $privateKey = $keys['privatekey'];
+            $text = $privateKey."====";
             $fpdi->Text($left,$top,$text);
         }
   
         return $fpdi->Output($outputFilePath, 'F');
     }
+
+    // public function generateKey(){
+    //     $rsa = new \Crypt_RSA();
+    //     $keys = $rsa->createKey(4096);
+    //     $publicKey = $keys['publickey'];
+    //     $privateKey = $keys['privatekey'];
+
+    //     return $privateKey;
+    // }
 }
