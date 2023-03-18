@@ -24,7 +24,7 @@ class CreateDataTable extends Migration
             $table->string("start_study");
             $table->string("nim");
             $table->string("image");
-            $table->string("private_key");
+            $table->string("message");
             $table->string("public_key");
             $table->timestamps();
         });

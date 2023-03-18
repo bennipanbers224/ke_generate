@@ -48,6 +48,11 @@ class SignatureController extends Controller
      */
     public function store(Request $request)
     {
+        $rsa = new \Crypt_RSA();
+        $keys = $rsa->createKey();
+        $publickey = $keys['publickey'];
+        $privatekey = $keys['privatekey'];
+
         $request->validate([
             'file' => 'required|mimes:pdf|max:2048',
         ]);
@@ -57,11 +62,18 @@ class SignatureController extends Controller
         $request->file->move(public_path('upload'), $fileName);
 
         $rsa = new \Crypt_RSA();
-        $keys = $rsa->createKey(4096);
-        $publicKey = $keys['publickey'];
-        $privateKey = $keys['privatekey'];
 
-        $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName, $privateKey);
+        $message = hash('sha256', $request->file);
+        // $encode = $privateKey->encrypt($hash);
+
+        $dataKey = explode(":",env("APP_KEY"));
+        $key = $dataKey[1];
+
+        $data = $this->encryptthis($message, $key);
+
+        $ciphertext = $this->encryptData($data, $privatekey);
+
+        $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName, $ciphertext);
               
         $data = data::create([
             'name'=>"Glesia Putra Silalahi",
@@ -73,10 +85,23 @@ class SignatureController extends Controller
             'nim'=>"14S18004",
             'certificate_number'=>"202012022000360",
             'image'=>$fileName,
-            'private_key'=>$privateKey,
-            'public_key'=>$publicKey
+            'message'=>$message,
+            'public_key'=>$publickey
         ]);
         return back()->with('success', 'success for generate signature')->with('file',$fileName);
+    }
+
+    public function encryptthis($data, $key) {
+        $encryption_key = base64_decode($key);
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
+        $encrypted = openssl_encrypt($data, 'aes-256-cbc', $encryption_key, 0, $iv);
+        return base64_encode($encrypted . '::' . $iv);
+    }
+
+    function decryptthis($data, $key) {
+        $encryption_key = base64_decode($key);
+        list($encrypted_data, $iv) = array_pad(explode('::', base64_decode($data), 2),2,null);
+        return openssl_decrypt($encrypted_data, 'aes-256-cbc', $encryption_key, 0, $iv);
     }
 
     public function getVerificationResult(Request $request){
@@ -92,13 +117,17 @@ class SignatureController extends Controller
         $pdf = $pdfParser->parseFile(public_path('verify_file/'.$fileName));
         $content = $pdf->getText();
 
-        $key = explode("====", $content);
+        $keyEncrypted = explode("====", $content);
+
+        $dataKey = explode(":",env("APP_KEY"));
+        $key = $dataKey[1];
 
         // echo $key[0];
 
-        $data = data::where('private_key', '=', $key[0])->get();
+        $encrypted = $keyEncrypted[0];
+        $decrypted = $this->decryptthis($encrypted, $key);
 
-        // var_dump($data);
+        $data = data::where('public_key', '=', $decrypted)->get();
 
         if(count($data)>0){
             return back()->with('success', 'Your certificate is fully original')->with('file',$fileName)->with(compact('data'));
@@ -168,7 +197,7 @@ class SignatureController extends Controller
             
             $fpdi->SetFont("arial", "", 2);
             $fpdi->SetTextColor(0,0,0);
-
+            
             $left = 10;
             $top = 10;
             $text = $privateKey."====";
@@ -178,12 +207,22 @@ class SignatureController extends Controller
         return $fpdi->Output($outputFilePath, 'F');
     }
 
-    // public function generateKey(){
-    //     $rsa = new \Crypt_RSA();
-    //     $keys = $rsa->createKey(4096);
-    //     $publicKey = $keys['publickey'];
-    //     $privateKey = $keys['privatekey'];
+    function encryptData($data, $publicKey) {
+        $rsa = new \Crypt_RSA();
+        $rsa->loadKey($publicKey); // public key
+        $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
+        $output = $rsa->encrypt($data);
+        return base64_encode($output);
+    }
+    
+    function decryptData($data, $publicKey) {
+        $rsa = new \Crypt_RSA();
+        $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
+        $ciphertext = base64_decode($data);
+        $rsa->loadKey($publicKey); // public key
+        $output = $rsa->decrypt($ciphertext);
+        // $output = $rsa->decrypt($data);
+        return $output;
+    }
 
-    //     return $privateKey;
-    // }
 }

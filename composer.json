@@ -16,7 +16,9 @@
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.3",
         "smalot/pdfparser": "^2.3",
-        "spatie/pdf-to-text": "^1.4"
+        "spatie/crypto": "^2.0",
+        "spatie/pdf-to-text": "^1.4",
+        "vlucas/pikirasa": "^1.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -61,7 +63,11 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "platform-check": false,
+        "platform": {
+            "php": "7.4.3"
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

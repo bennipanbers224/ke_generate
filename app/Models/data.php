@@ -21,7 +21,7 @@ class data extends Model
         'nim',
         'certificate_number',
         'image',
-        'private_key',
+        'message',
         'public_key'
     ];
 }
