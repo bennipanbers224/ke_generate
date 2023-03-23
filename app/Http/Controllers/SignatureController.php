@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\data;
 use Smalot\PdfParser\Parser;
-use setasign\Fpdi\Fpdi;
+use setasign\Fpdi\Tcpdf\Fpdi;
 use PDF;
 use Illuminate\Support\Facades\Hash;
 use phpseclib\Crypt\RSA;
@@ -61,6 +61,13 @@ class SignatureController extends Controller
    
         $request->file->move(public_path('upload'), $fileName);
 
+        $pdfParser = new Parser();
+        $pdf = $pdfParser->parseFile(public_path('upload/'.$fileName));
+
+        $content = $pdf->getText();
+
+        $nama = explode("Lahir di", explode("menyatakan bahwa", $content)[1]);
+
         $rsa = new \Crypt_RSA();
 
         $message = hash('sha256', $request->file);
@@ -76,16 +83,7 @@ class SignatureController extends Controller
         $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName, $ciphertext);
               
         $data = data::create([
-            'name'=>"Glesia Putra Silalahi",
-            'major'=>"Sistem Informasi",
-            'title'=>"Sarjana Komputer (S.Kom.)",
-            'predicate'=>"Sangat Memuaskan",
-            'graduation_date'=>"15 Agustus 2022",
-            'start_study'=>"2018/2019",
-            'nim'=>"14S18004",
-            'certificate_number'=>"202012022000360",
-            'image'=>$fileName,
-            'message'=>$message,
+            'name'=>$nama[0],
             'public_key'=>$publickey
         ]);
         return back()->with('success', 'success for generate signature')->with('file',$fileName);
@@ -119,6 +117,7 @@ class SignatureController extends Controller
 
         $keyEncrypted = explode("====", $content);
 
+        echo $keyEncrypted[0];
         $dataKey = explode(":",env("APP_KEY"));
         $key = $dataKey[1];
 
@@ -182,13 +181,15 @@ class SignatureController extends Controller
         //
     }
 
+
+    //function for generate pdf using certificate
     public function fillPDFFile($file, $outputFilePath, $fileName, $privateKey)
     {
-        $fpdi = new FPDI;
+        $fpdi = new FPDI('P', 'mm', 'A4');
           
         $count = $fpdi->setSourceFile($file);
 
-        $certificate = 'file://'.base_path().'/public/tcpdf.crt';
+        $certificate = 'file://'.base_path().'/public/certificate/tcpdf.crt';
 
         $info = array(
             'Name' => 'TCPDF',
@@ -203,8 +204,7 @@ class SignatureController extends Controller
             $size = $fpdi->getTemplateSize($template);
             $fpdi->AddPage($size['orientation'], array($size['width'], $size['height']));
             $fpdi->useTemplate($template);
-            
-            $fpdi->SetFont("arial", "", 2);
+
             $fpdi->SetTextColor(0,0,0);
             
             $left = 10;
@@ -212,7 +212,7 @@ class SignatureController extends Controller
             $text = $privateKey."====";
             $fpdi->Text($left,$top,$text);
 
-            PDF::setSignature($certificate, $certificate, 'tcpdfdemo', '', 2, $info);
+            $fpdi->setSignature($certificate, $certificate, 'tcpdfdemo', '', 2, $info);
         }
   
         return $fpdi->Output($outputFilePath, 'F');

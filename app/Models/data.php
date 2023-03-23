@@ -13,15 +13,6 @@ class data extends Model
 
     protected $fillable = [
         'name',
-        'major',
-        'title',
-        'predicate',
-        'graduation_date',
-        'start_study',
-        'nim',
-        'certificate_number',
-        'image',
-        'message',
         'public_key'
     ];
 }
