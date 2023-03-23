@@ -187,6 +187,15 @@ class SignatureController extends Controller
         $fpdi = new FPDI;
           
         $count = $fpdi->setSourceFile($file);
+
+        $certificate = 'file://'.base_path().'/public/tcpdf.crt';
+
+        $info = array(
+            'Name' => 'TCPDF',
+            'Location' => 'Office',
+            'Reason' => 'Testing TCPDF',
+            'ContactInfo' => 'http://www.tcpdf.org',
+        );
   
         for ($i=1; $i<=$count; $i++) {
   
@@ -202,6 +211,8 @@ class SignatureController extends Controller
             $top = 10;
             $text = $privateKey."====";
             $fpdi->Text($left,$top,$text);
+
+            PDF::setSignature($certificate, $certificate, 'tcpdfdemo', '', 2, $info);
         }
   
         return $fpdi->Output($outputFilePath, 'F');
