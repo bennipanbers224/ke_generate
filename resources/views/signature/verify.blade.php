@@ -40,23 +40,10 @@
        </div>
        <?php $data =  Session::get('data'); ?>
        <table class="table table-striped">
-            <thead>
-                <tr>
-                <th scope="col">Certificate Number</th>
-                <th scope="col">Name</th>
-                <th scope="col">Major</th>
-                <th scope="col">Title</th>
-                <th scope="col">Predicate</th>
-                </tr>
-            </thead>
             <tbody>
                 <tr>
                     @foreach($data as $data)
-                        <td>{{$data->certificate_number}}</td>
-                        <td>{{$data->name}}</td>
-                        <td>{{$data->major}}</td>
-                        <td>{{$data->title}}</td>
-                        <td>{{$data->predicate}}</td>
+                        <td>This file is verified by {{$data->name}}</td>
                     @endforeach
                 </tr>
             </tbody>

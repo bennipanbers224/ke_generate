@@ -71,20 +71,17 @@ class SignatureController extends Controller
         $rsa = new \Crypt_RSA();
 
         $message = hash('sha256', $request->file);
-        // $encode = $privateKey->encrypt($hash);
 
         $dataKey = explode(":",env("APP_KEY"));
         $key = $dataKey[1];
 
         $data = $this->encryptthis($message, $key);
 
-        $ciphertext = $this->encryptData($data, $privatekey);
-
-        $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName, $ciphertext);
+        $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName, $data);
               
         $data = data::create([
             'name'=>$nama[0],
-            'public_key'=>$publickey
+            'public_key'=>$message,
         ]);
         return back()->with('success', 'success for generate signature')->with('file',$fileName);
     }
@@ -117,11 +114,8 @@ class SignatureController extends Controller
 
         $keyEncrypted = explode("====", $content);
 
-        echo $keyEncrypted[0];
         $dataKey = explode(":",env("APP_KEY"));
-        $key = $dataKey[1];
-
-        // echo $key[0];
+        $key = $dataKey[1];       
 
         $encrypted = $keyEncrypted[0];
         $decrypted = $this->decryptthis($encrypted, $key);
@@ -216,24 +210,6 @@ class SignatureController extends Controller
         }
   
         return $fpdi->Output($outputFilePath, 'F');
-    }
-
-    function encryptData($data, $publicKey) {
-        $rsa = new \Crypt_RSA();
-        $rsa->loadKey($publicKey); // public key
-        $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
-        $output = $rsa->encrypt($data);
-        return base64_encode($output);
-    }
-    
-    function decryptData($data, $publicKey) {
-        $rsa = new \Crypt_RSA();
-        $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
-        $ciphertext = base64_decode($data);
-        $rsa->loadKey($publicKey); // public key
-        $output = $rsa->decrypt($ciphertext);
-        // $output = $rsa->decrypt($data);
-        return $output;
     }
 
 }
