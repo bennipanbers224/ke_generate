@@ -104,7 +104,7 @@ class SignatureController extends Controller
             'file' => 'required|mimes:pdf|max:2048',
         ]);
 
-        $fileName = $request->file->getClientOriginalName().'.'.$request->file->extension();
+        $fileName = $request->file->getClientOriginalName();
 
         $request->file->move(public_path('verify_file'), $fileName);
 
