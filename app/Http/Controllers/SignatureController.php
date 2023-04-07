@@ -112,22 +112,34 @@ class SignatureController extends Controller
         $pdf = $pdfParser->parseFile(public_path('verify_file/'.$fileName));
         $content = $pdf->getText();
 
-        $keyEncrypted = explode("====", $content);
+        //checking if the file has
 
-        $dataKey = explode(":",env("APP_KEY"));
-        $key = $dataKey[1];       
+        if(str_contains($content, "====")){
+            $keyEncrypted = explode("====", $content);
 
-        $encrypted = $keyEncrypted[0];
-        $decrypted = $this->decryptthis($encrypted, $key);
+            $dataKey = explode(":",env("APP_KEY"));
+            $key = $dataKey[1];       
 
-        $data = data::where('public_key', '=', $decrypted)->get();
+            $encrypted = $keyEncrypted[0];
+            $decrypted = $this->decryptthis($encrypted, $key);
 
-        if(count($data)>0){
-            return back()->with('success', 'Your certificate is fully original')->with('file',$fileName)->with(compact('data'));
+            $data = data::where('public_key', 'like', "%{$decrypted}%")->get();
+
+            var_dump($data);
+            echo "<br>". count($data);
+
+            if(count($data)>0){
+                return back()->with('success', 'Your certificate is fully original')->with('file',$fileName)->with(compact('data'));
+            }
+            else{
+                return back()->with('error', 'Your certificate not fount for verification')->with('file',$fileName)->with(compact('data'));
+            }
         }
         else{
             return back()->with('error', 'Your certificate not fount for verification')->with('file',$fileName)->with(compact('data'));
         }
+
+        
     }
 
     /**
