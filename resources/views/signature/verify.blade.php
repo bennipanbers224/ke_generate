@@ -32,6 +32,7 @@
   
            </div>
        </form>
+       <br><br>
 
        @if ($message = Session::get('success'))
        <iframe width="850px" height="500px" src="verify_file/{{ Session::get('file') }}"></iframe>
