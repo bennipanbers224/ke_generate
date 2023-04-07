@@ -123,10 +123,15 @@ class SignatureController extends Controller
             $encrypted = $keyEncrypted[0];
             $decrypted = $this->decryptthis($encrypted, $key);
 
-            $data = data::where('public_key', 'like', "%{$decrypted}%")->get();
+            if(!empty($decrypted)){
+                $data = data::where('public_key', 'like', "%{$decrypted}%")->get();
 
-            if(count($data)>0){
-                return back()->with('success', 'Your certificate is fully original')->with('file',$fileName)->with(compact('data'));
+                if(count($data)>0){
+                    return back()->with('success', 'Your certificate is fully original')->with('file',$fileName)->with(compact('data'));
+                }
+                else{
+                    return back()->with('error', 'Your certificate not fount for verification')->with('file',$fileName);
+                }
             }
             else{
                 return back()->with('error', 'Your certificate not fount for verification')->with('file',$fileName);
