@@ -48,11 +48,6 @@ class SignatureController extends Controller
      */
     public function store(Request $request)
     {
-        $rsa = new \Crypt_RSA();
-        $keys = $rsa->createKey();
-        $publickey = $keys['publickey'];
-        $privatekey = $keys['privatekey'];
-
         $request->validate([
             'file' => 'required|mimes:pdf|max:2048',
         ]);
@@ -66,17 +61,21 @@ class SignatureController extends Controller
 
         $content = $pdf->getText();
 
+
+        //get nama dari file pdf
         $nama = explode("Lahir di", explode("menyatakan bahwa", $content)[1]);
 
-        $rsa = new \Crypt_RSA();
 
-        $message = hash('sha256', $request->file);
+        //message digest encryption
+        $message = hash('md5', $request->file);
 
         $dataKey = explode(":",env("APP_KEY"));
         $key = $dataKey[1];
 
         $data = $this->encryptthis($message, $key);
 
+
+        //line for sign file
         $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName, $data);
               
         $data = data::create([
@@ -86,6 +85,7 @@ class SignatureController extends Controller
         return back()->with('success', 'success for generate signature')->with('file',$fileName);
     }
 
+    //encrypt message digest
     public function encryptthis($data, $key) {
         $encryption_key = base64_decode($key);
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
@@ -93,12 +93,14 @@ class SignatureController extends Controller
         return base64_encode($encrypted . '::' . $iv);
     }
 
+    //decrypt message digest
     function decryptthis($data, $key) {
         $encryption_key = base64_decode($key);
         list($encrypted_data, $iv) = array_pad(explode('::', base64_decode($data), 2),2,null);
         return openssl_decrypt($encrypted_data, 'aes-256-cbc', $encryption_key, 0, $iv);
     }
 
+    //fungsi untuk verifikasi
     public function getVerificationResult(Request $request){
         $request->validate([
             'file' => 'required|mimes:pdf|max:2048',
@@ -112,8 +114,7 @@ class SignatureController extends Controller
         $pdf = $pdfParser->parseFile(public_path('verify_file/'.$fileName));
         $content = $pdf->getText();
 
-        //checking if the file has
-
+        //checking if the file has key inside
         if(str_contains($content, "====")){
             $keyEncrypted = explode("====", $content);
 
