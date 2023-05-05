@@ -16,7 +16,8 @@ class CreateDataTable extends Migration
         Schema::create('data', function (Blueprint $table) {
             $table->id();
             $table->string("name");
-            $table->string("public_key");
+            $table->string("message_digest");
+            $table->string("signature");
             $table->timestamps();
         });
     }

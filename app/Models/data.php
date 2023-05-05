@@ -13,6 +13,7 @@ class data extends Model
 
     protected $fillable = [
         'name',
-        'public_key'
+        'message_digest',
+        'signature'
     ];
 }
