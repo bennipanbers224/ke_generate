@@ -68,7 +68,7 @@ class SignatureController extends Controller
         $nama = explode("Lahir di", explode("menyatakan bahwa", $content)[1]);
 
         //message digest encryption
-        $message = Hash::make($content);
+        $message = hash('sha256', $content);
 
         $privateKey = "-----BEGIN RSA PRIVATE KEY----- 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 -----END RSA PRIVATE KEY-----";
 
@@ -107,43 +107,40 @@ class SignatureController extends Controller
 
         $content = $pdf->getText();
 
-        $data = data::all();
+        $message = hash('sha256', $content);
 
-        //comparing data file request with data from database
-        for($i=0; $i<count($data); $i++){
-            $message = Hash::check($content, $data[$i]->message_digest);
-
-            if($message){
-                $result = $data[$i]->message_digest;
-                $isExist = TRUE;
-                break;
-            }
-        }
-        
         //get data with significant result
-        if($isExist){
-            $file = data::select('name', 'message_digest', 'signature')->where('message_digest', '=', $result)->get();
+        $data = data::select('name', 'message_digest', 'signature')->where('message_digest', '=', $message)->get();
 
-
-            //checking signature is same or not with the message digest file
-            foreach($file as $file){
+        if(count($data)>0){
+            
+            //get signature file from database
+            foreach($data as $file){
                 //decrypt data using public key
                 $message_digest = $this->decryptData($file->signature, $publicKey);
-
-                $isSame = Hash::check($content, $message_digest);
             }
-            
+
+            //comparing message digest file upload with decrypt signature result (note : decrypt signature result is message digest)
+            if($message == $message_digest){
+                $isSame = TRUE;
+            }
+            else{
+                $isSame = false;
+            }   
+
+
             if($isSame){
                 return back()->with('success', 'Your certificate is fully original')->with('file',$fileName)->with(compact('data'));
             }
             else{
                 return back()->with('error', 'Your certificate is not original')->with('file',$fileName);
             }
-
-        }else{
-            return back()->with('error', 'Your certificate not found for verification')->with('file',$fileName);
+            return back()->with('success', 'Your certificate is fully original')->with('file',$fileName)->with(compact('data'));
         }
-        
+        else{
+            return back()->with('error', 'Your certificate is not original')->with('file',$fileName);
+        }
+
     }
 
     /**
