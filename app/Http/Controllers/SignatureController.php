@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\data;
+use App\Models\data_file;
 use Smalot\PdfParser\Parser;
 use setasign\Fpdi\Tcpdf\Fpdi;
 use PDF;
@@ -77,7 +77,7 @@ class SignatureController extends Controller
 
        
               
-        $data = data::create([
+        $data = data_file::create([
             'name'=>$nama[0],
             'message_digest'=>$message,
             'signature'=>$signature,
@@ -110,15 +110,11 @@ class SignatureController extends Controller
         $message = hash('sha256', $content);
 
         //get data with significant result
-        $data = data::select('name', 'message_digest', 'signature')->where('message_digest', '=', $message)->get();
+        $data = data_file::where('message_digest', '=', $message)->first();
 
-        if(count($data)>0){
-            
-            //get signature file from database
-            foreach($data as $file){
-                //decrypt data using public key
-                $message_digest = $this->decryptData($file->signature, $publicKey);
-            }
+        if($data!=NULL){
+
+            $message_digest = $this->decryptData($data['signature'], $publicKey);
 
             //comparing message digest file upload with decrypt signature result (note : decrypt signature result is message digest)
             if($message == $message_digest){

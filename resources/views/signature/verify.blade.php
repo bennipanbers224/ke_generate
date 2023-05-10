@@ -43,9 +43,7 @@
        <table class="table table-striped">
             <tbody>
                 <tr>
-                    @foreach($data as $data)
-                        <td>This file is verified by {{$data->name}}</td>
-                    @endforeach
+                    <td>This file is verified by {{$data['name']}}</td>
                 </tr>
             </tbody>
         </table>
