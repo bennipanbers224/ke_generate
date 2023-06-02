@@ -9,7 +9,7 @@ class data_file extends Model
 {
     use HasFactory;
 
-    protected $table = 'data_file';
+    protected $table = 'data_files';
 
     protected $fillable = [
         'name',
