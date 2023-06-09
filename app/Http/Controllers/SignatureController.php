@@ -214,7 +214,7 @@ class SignatureController extends Controller
 
     function decryptData($data, $publicKey) {
         $rsa = new \Crypt_RSA();
-        $rsa->setDecryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
+        $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
         $ciphertext = base64_decode($data);
         $rsa->loadKey($publicKey);
         $output = $rsa->decrypt($ciphertext);
