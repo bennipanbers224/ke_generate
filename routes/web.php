@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SignatureController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,20 +21,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     /**
      * Home Routes
      */
-    Route::get('/', 'HomeController@index')->name('home.index');
-
     Route::group(['middleware' => ['guest']], function() {
         /**
          * Register Routes
          */
-        Route::get('/register', 'RegisterController@show')->name('register.show');
-        Route::post('/register', 'RegisterController@register')->name('register.perform');
+        Route::get('/', function () {
+            return view('auth.login');
+        });
+        Route::get('/register', [RegisterController::class,'show']);
+        Route::post('/registerPost', [RegisterController::class,'register']);
 
         /**
          * Login Routes
          */
-        Route::get('/login', 'LoginController@show')->name('login.show');
-        Route::post('/login', 'LoginController@login')->name('login.perform');
+        Route::get('/login', [LoginController::class,'show']);
+        Route::post('/loginPost', [LoginController::class, 'login']);
 
     });
 
@@ -40,10 +43,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         /**
          * Logout Routes
          */
-        Route::get('/', function () {
+        
+         Route::get('/', function () {
             return view('signature.signature');
         });
-        
         
         Route::resource('signature', SignatureController::class);
         
