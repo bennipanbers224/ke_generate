@@ -67,12 +67,11 @@ class SignatureController extends Controller
 
         $message = hash('sha256', $content);
 
-        $rsa = new \Crypt_RSA();
-        $keys = $rsa->createKey();
-        // $publickey = $keys['publickey'];
-        $privateKey = $keys['privatekey'];
+        // $rsa = new \Crypt_RSA();
+        // $keys = $rsa->createKey();
+        
 
-        $signature = $this->encryptData($message, $privateKey);
+        $signature = $this->encryptData($message);
 
        
               
@@ -87,9 +86,9 @@ class SignatureController extends Controller
     public function getVerificationResult(Request $request){
 
 
-        $rsa = new \Crypt_RSA();
-        $keys = $rsa->createKey();
-        $publicKey = $keys['publickey'];
+        // $rsa = new \Crypt_RSA();
+        // $keys = $rsa->createKey();
+        
 
 
         $request->validate([
@@ -111,7 +110,7 @@ class SignatureController extends Controller
 
         if($result!=NULL){
 
-            $database_messageDigest = $this->decryptData($result['signature'], $publicKey);
+            $database_messageDigest = $this->decryptData($result['signature']);
 
             if($file_messageDigest == $database_messageDigest){
                 // return back()->with('success', 'Your certificate is fully original')->with('file',$fileName)->with(compact('data'));
@@ -204,16 +203,20 @@ class SignatureController extends Controller
         return $fpdi->Output($outputFilePath, 'F');
     }
 
-    function encryptData($data, $publicKey) {
+    function encryptData($data) {
         $rsa = new \Crypt_RSA();
-        $rsa->loadKey($publicKey);
+        $keys = $rsa->createKey();
+        $privateKey = $keys['privatekey'];
+        $rsa->loadKey($privateKey);
         $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
         $output = $rsa->encrypt($data);
         return base64_encode($output);
     }
 
-    function decryptData($data, $publicKey) {
+    function decryptData($data) {
         $rsa = new \Crypt_RSA();
+        $keys = $rsa->createKey();
+        $publicKey = $keys['publickey'];
         $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
         $ciphertext = base64_decode($data);
         $rsa->loadKey($publicKey);

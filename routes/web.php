@@ -21,20 +21,26 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     /**
      * Home Routes
      */
+
+
+     Route::get('/', function () {
+        return view('auth.login');
+    });
+
     Route::group(['middleware' => ['guest']], function() {
         /**
          * Register Routes
          */
-        Route::get('/', function () {
-            return view('auth.login');
-        });
+
+
         Route::get('/register', [RegisterController::class,'show']);
         Route::post('/registerPost', [RegisterController::class,'register']);
 
         /**
          * Login Routes
          */
-        Route::get('/login', [LoginController::class,'show']);
+
+        Route::get('/login', [LoginController::class,'show'])->name('login');
         Route::post('/loginPost', [LoginController::class, 'login']);
 
     });
@@ -48,9 +54,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             return view('signature.signature');
         });
         
-        Route::resource('signature', SignatureController::class);
+        // Route::resource('signature', SignatureController::class);
         
         Route::get('generate-pdf', [SignatureController::class, 'generatePDF']);
+        Route::post('/file-post', [SignatureController::class, 'store']);
         
         Route::get('/toGenerate', [SignatureController::class, 'generateKey']);
         Route::get('/toVerify', [SignatureController::class, 'verify']);

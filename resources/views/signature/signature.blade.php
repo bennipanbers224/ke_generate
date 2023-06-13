@@ -17,7 +17,7 @@
                 </div>
             @endif  
     
-            <form action="{{ route('signature.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="/file-post" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
         
