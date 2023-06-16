@@ -59,7 +59,7 @@
             <div class="col-lg-7 px-5 text-start">
                 <div class="h-100 d-inline-flex align-items-center me-4">
                     <small class="fa fa-map-marker-alt text-primary me-2"></small>
-                    <small>Admin</small>
+                    <small>Hi, {{ auth()->user()->name }}</small>
                 </div>
             </div>
         </div>
@@ -73,29 +73,45 @@
                     <a href="/" class="d-block p-3 link-dark text-decoration-none" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
                         <i class="bi-bootstrap fs-1"></i>
                     </a>
-                    <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
-                        <li class="nav-item">
-                            <a href="/toGenerate" class="nav-link py-5 px-5" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
-                                <div class="card" style="width: 200px; height:150px;">
-                                    <img src="{{asset('images/sign.png')}}" class="card-img-top" alt="..." style="width: 200px; height:150px;">
-                                    <div class="card-body">
-                                        <p class="card-text">Generate File Key</p>
+                    @if(auth()->user()->status == 'Admin')
+                        <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
+                            <li class="nav-item">
+                                <a href="/toGenerate" class="nav-link py-5 px-5" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
+                                    <div class="card" style="width: 200px; height:150px;">
+                                        <img src="{{asset('images/sign.png')}}" class="card-img-top" alt="..." style="width: 200px; height:150px;">
+                                        <div class="card-body">
+                                            <p class="card-text">Generate File Key</p>
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
-                        </li>
-                        <br><br>
-                        <li>
-                            <a href="/toVerify" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
-                                <div class="card" style="width: 200px; height:150px;">
-                                    <img src="{{asset('images/documents.png')}}" class="card-img-top" alt="..." style="width: 200px; height:150px;">
-                                    <div class="card-body">
-                                        <p class="card-text">Verification File</p>
+                                </a>
+                            </li>
+                            <br><br>
+                            <li>
+                                <a href="/toVerify" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
+                                    <div class="card" style="width: 200px; height:150px;">
+                                        <img src="{{asset('images/documents.png')}}" class="card-img-top" alt="..." style="width: 200px; height:150px;">
+                                        <div class="card-body">
+                                            <p class="card-text">Verification File</p>
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
+                                </a>
+                            </li>
+                        </ul>
+                    @else
+                        <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
+                            <br><br>
+                            <li>
+                                <a href="/toVerify" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
+                                    <div class="card" style="width: 200px; height:150px;">
+                                        <img src="{{asset('images/documents.png')}}" class="card-img-top" alt="..." style="width: 200px; height:150px;">
+                                        <div class="card-body">
+                                            <p class="card-text">Verification File</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    @endif
                 </div>
             </div>
             <div class="col-sm p-3 min-vh-100">
