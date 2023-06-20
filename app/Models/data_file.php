@@ -12,8 +12,7 @@ class data_file extends Model
     protected $table = 'data_files';
 
     protected $fillable = [
-        'name',
-        'message_digest',
-        'signature'
+        'user_id',
+        'file_name'
     ];
 }

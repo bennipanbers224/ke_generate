@@ -1,45 +1,36 @@
 @extends('tamplate.layout')
 
-@section('content')
-<div class="container">
-   <div class="panel panel-primary">
-        <div class="panel-heading"><h2>Upload file for generate key</h2></div>
-        <div class="panel-body">
-    
-            @if (count($errors) > 0)
-                <div class="alert alert-danger">
-                    <strong>Whoops!</strong> There were some problems with your input.
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif  
-    
-            <form action="/file-post" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="row">
-        
-                    <div class="col-md-6">
-                        <input type="file" name="file" class="form-control">
-                    </div>
-        
-                    <div class="col-md-6">
-                        <button type="submit" class="btn btn-success">Upload</button>
-                    </div>
-        
-                </div>
-            </form>
-            <br><br>
-            @if ($message = Session::get('success'))
-            <div class="alert alert-success alert-block" style="width: 500px;">
-                    <strong>{{ $message }}</strong>
-            </div>
-            <iframe width="850px" height="500px" src="upload/{{ Session::get('file') }}"></iframe>
-            @endif
-    
+    @section('content')
+
+        <div class="container">
+
+        <div role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-outline-primary">Request</button>
+            <button type="button" class="btn btn-outline-success">Done</button>
         </div>
-   </div>
-</div>
-@endsection
+
+            <table class="table">
+                <thead>
+                    <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">User Status</th>
+                    <th scope="col">File</th>
+                    <th scope="col" colspan="2">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($data as $data)
+                        <tr>
+                            <th scope="row">{{$data->id}}</th>
+                            <td>{{$data->name}}</td>
+                            <td>{{$data->status}}</td>
+                            <td>{{$data->file_name}}</td>
+                            <td><a href="/detail/{{$data->id}}"><button type="button" class="btn btn-success">Detail</button></a></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+    @endsection

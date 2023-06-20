@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Models\data_file;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,9 +50,28 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         /**
          * Logout Routes
          */
+
+        // if(Auth::check()){
+        //     if(Auth::user()->status == "Admin"){
+        //         Route::get('/',[SignatureController::class, 'admin']);
+        //     }else{
+        //         Route::get('/',[SignatureController::class, 'user']);
+        //     }
+        // }
         
-         Route::get('/', function () {
-            return view('signature.signature');
+        Route::get('/', function () {
+            // return view('signature.signature');
+            if(Auth::user()->status == "Admin"){
+                $data = data_file::select('data_files.id', 'data_files.file_name', 'users.name', 'users.status')
+                ->join("users", "data_files.user_id", "=", "users.id")->get();
+
+                return view("signature.signature")->with(compact("data"));
+            }else{
+
+                $data = data_file::where("user_id","=", Auth::user()->id)->get();
+
+                return view("signature.user-home")->with(compact("data"));
+            }
         });
         
         // Route::resource('signature', SignatureController::class);
@@ -63,6 +83,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('/toVerify', [SignatureController::class, 'verify']);
         Route::post('/verify-file',[SignatureController::class, 'getVerificationResult']);
         Route::get('/logout', 'LogoutController@perform')->name('logout.perform');
+        Route::get('/detail/{id}', [SignatureController::class, 'detail']);
     });
 });
 

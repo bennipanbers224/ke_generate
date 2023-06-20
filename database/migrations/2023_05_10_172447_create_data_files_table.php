@@ -15,9 +15,8 @@ class CreateDataFilesTable extends Migration
     {
         Schema::create('data_files', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
-            $table->string("message_digest");
-            $table->string("signature");
+            $table->string("user_id");
+            $table->string("file_name");
             $table->timestamps();
         });
     }

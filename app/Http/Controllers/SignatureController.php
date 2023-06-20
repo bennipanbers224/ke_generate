@@ -29,7 +29,6 @@ class SignatureController extends Controller
     public function verify(){
         return view("signature.verify");
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -56,31 +55,37 @@ class SignatureController extends Controller
    
         $request->file->move(public_path('upload'), $fileName);
         
-        $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
+        // $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
 
-        $pdfParser = new Parser();
-        $pdf = $pdfParser->parseFile(public_path('upload/'.$fileName));
+        // $pdfParser = new Parser();
+        // $pdf = $pdfParser->parseFile(public_path('upload/'.$fileName));
 
-        $content = $pdf->getText();
+        // $content = $pdf->getText();
 
-        $nama = explode("Lahir di", explode("menyatakan bahwa", $content)[1]);
+        // $nama = explode("Lahir di", explode("menyatakan bahwa", $content)[1]);
 
-        $message = hash('sha256', $content);
+        // $message = hash('sha256', $content);
 
         // $rsa = new \Crypt_RSA();
         // $keys = $rsa->createKey();
         
 
-        $signature = $this->encryptData($message);
+        // $signature = $this->encryptData($message);
 
        
               
         $data = data_file::create([
-            'name'=>$nama[0],
-            'message_digest'=>$message,
-            'signature'=>$signature,
+            'user_id'=>auth()->user()->id,
+            'file_name'=>$fileName,
         ]);
         return back()->with('success', 'success for generate signature')->with('file',$fileName);
+    }
+
+    public function detail($id){
+        $data = data_file::select('data_files.id', 'data_files.file_name', 'users.name', 'users.status')
+                ->join("users", "data_files.user_id", "=", "users.id")->where("data_files.id", "=", $id)->first();
+
+        return view('signature.detail')->with(compact('data'));
     }
 
     public function getVerificationResult(Request $request){
