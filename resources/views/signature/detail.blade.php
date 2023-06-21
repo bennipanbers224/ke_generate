@@ -20,6 +20,20 @@
                     </tr>
                 </tbody>
             </table>
+
+
+            <form action="/signing" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="row">
+                    <input type="hidden" name="file_id" value="{{$data['id']}}" class="form-control">
+                    <input type="hidden" name="file_name" value="{{$data['file_name']}}" class="form-control">
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-outline-info">Signing This File</button>
+                    </div>
+        
+                </div>
+            </form>
         </div>
 
     @endsection

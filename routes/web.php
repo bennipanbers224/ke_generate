@@ -84,6 +84,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::post('/verify-file',[SignatureController::class, 'getVerificationResult']);
         Route::get('/logout', 'LogoutController@perform')->name('logout.perform');
         Route::get('/detail/{id}', [SignatureController::class, 'detail']);
+        Route::post('/signing',[SignatureController::class, 'signing']);
     });
 });
 

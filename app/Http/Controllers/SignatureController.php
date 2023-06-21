@@ -9,6 +9,7 @@ use setasign\Fpdi\Tcpdf\Fpdi;
 use PDF;
 use Illuminate\Support\Facades\Hash;
 use phpseclib\Crypt\RSA;
+use Illuminate\Support\Facades\Http;
 
 class SignatureController extends Controller
 {
@@ -54,25 +55,6 @@ class SignatureController extends Controller
         $fileName = time().'.'.$request->file->extension();  
    
         $request->file->move(public_path('upload'), $fileName);
-        
-        // $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
-
-        // $pdfParser = new Parser();
-        // $pdf = $pdfParser->parseFile(public_path('upload/'.$fileName));
-
-        // $content = $pdf->getText();
-
-        // $nama = explode("Lahir di", explode("menyatakan bahwa", $content)[1]);
-
-        // $message = hash('sha256', $content);
-
-        // $rsa = new \Crypt_RSA();
-        // $keys = $rsa->createKey();
-        
-
-        // $signature = $this->encryptData($message);
-
-       
               
         $data = data_file::create([
             'user_id'=>auth()->user()->id,
@@ -89,12 +71,6 @@ class SignatureController extends Controller
     }
 
     public function getVerificationResult(Request $request){
-
-
-        // $rsa = new \Crypt_RSA();
-        // $keys = $rsa->createKey();
-        
-
 
         $request->validate([
             'file' => 'required|mimes:pdf|max:2048',
@@ -130,6 +106,35 @@ class SignatureController extends Controller
         else{
             return back()->with('error', 'Your certificate is not original')->with('file',$fileName);
         }
+
+    }
+
+    public function signing(Request $request){
+
+        $fileName = $request->file_name;
+
+        $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
+
+        $pdfParser = new Parser();
+        $pdf = $pdfParser->parseFile(public_path('upload/'.$fileName));
+
+        $content = $pdf->getText();
+
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('POST', 'http://localhost:80/api_master_key_generate/generate.php', [
+            'form_params' => [
+                'data' => $content,
+                'file_id' => $request->file_id,
+            ]
+        ]);
+
+        echo $request->file_id;
+        echo "<br>".$request->file_name;
+        echo "<br>".$content;
+
+        $bodyresponcs = $response->getBody();
+        $result = json_decode($bodyresponcs);
+        print_r($result->status);
 
     }
 
