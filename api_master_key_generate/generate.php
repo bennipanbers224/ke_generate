@@ -18,14 +18,15 @@
     
     if (isset($_POST['data']) && isset($_POST['file_id'])) {
 
-        openssl_private_encrypt($data, $encryted, $privKey);
-        $encrypt = bin2hex($encryted);
-
         $data = $_POST['data'];
         $file_id = $_POST['file_id'];
+        $message_digest = md5($data);
+        openssl_private_encrypt($message_digest, $encryted, $privKey);
+        $encrypt = bin2hex($encryted);
+
+        
         $publicKey = $publicKey;
         $privateKey = $privKey;
-        $message_digest = md5($data);
         $signature = $encrypt;
      
         $store = $db->simpanData($publicKey, $privateKey, $message_digest, $signature, $file_id);

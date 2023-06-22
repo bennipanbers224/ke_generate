@@ -24,7 +24,26 @@ class Controller {
         }
     }
 
+    public function verification($message_digest){
+        $stmt = $this->conn->prepare("SELECT * FROM key_generate WHERE message_digest = ?");
+        $stmt->bind_param("s", $message_digest);
 
+        if($stmt->execute()){
+            $file_data = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if($message_digest == $file_data["message_digest"]){
+                return "success";
+            }
+            else{
+                return "error";
+            }
+
+        }
+        else{
+            return "error";
+        }
+    }
  
 }
  
