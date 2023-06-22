@@ -17,6 +17,7 @@ class CreateDataFilesTable extends Migration
             $table->id();
             $table->string("user_id");
             $table->string("file_name");
+            $table->string("status");
             $table->timestamps();
         });
     }

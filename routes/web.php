@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\UserController;
 use App\Models\data_file;
 
 /*
@@ -62,7 +63,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('/', function () {
             // return view('signature.signature');
             if(Auth::user()->status == "Admin"){
-                $data = data_file::select('data_files.id', 'data_files.file_name', 'users.name', 'users.status')
+                $data = data_file::select('data_files.id', 'data_files.file_name', 'data_files.status as status_file', 'users.name', 'users.status')
                 ->join("users", "data_files.user_id", "=", "users.id")->get();
 
                 return view("signature.signature")->with(compact("data"));
@@ -85,6 +86,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('/logout', 'LogoutController@perform')->name('logout.perform');
         Route::get('/detail/{id}', [SignatureController::class, 'detail']);
         Route::post('/signing',[SignatureController::class, 'signing']);
+        Route::get('/profile',[UserController::class, 'profile']);
     });
 });
 

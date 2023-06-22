@@ -59,12 +59,13 @@ class SignatureController extends Controller
         $data = data_file::create([
             'user_id'=>auth()->user()->id,
             'file_name'=>$fileName,
+            'status'=>"Requested",
         ]);
         return back()->with('success', 'success for generate signature')->with('file',$fileName);
     }
 
     public function detail($id){
-        $data = data_file::select('data_files.id', 'data_files.file_name', 'users.name', 'users.status')
+        $data = data_file::select('data_files.id', 'data_files.file_name', 'data_files.status as status_file', 'users.name', 'users.status')
                 ->join("users", "data_files.user_id", "=", "users.id")->where("data_files.id", "=", $id)->first();
 
         return view('signature.detail')->with(compact('data'));
@@ -85,27 +86,25 @@ class SignatureController extends Controller
 
         $content = $pdf->getText();
 
-        $file_messageDigest = hash('sha256', $content);
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('POST', 'http://localhost:80/api_master_key_generate/verify.php', [
+            'form_params' => [
+                'data' => $content,
+            ]
+        ]);
 
-        $result = data_file::where('message_digest', '=', $file_messageDigest)->first();
-
-        if($result!=NULL){
-
-            $database_messageDigest = $this->decryptData($result['signature']);
-
-            if($file_messageDigest == $database_messageDigest){
-                // return back()->with('success', 'Your certificate is fully original')->with('file',$fileName)->with(compact('data'));
-
-                echo "true";
-            }
-            else{
-                // return back()->with('error', 'Your certificate is not original')->with('file',$fileName);
-                echo "false";
-            }
+        $bodyresponcs = $response->getBody();
+        $result = json_decode($bodyresponcs);
+        if($result->message == "File is fully original"){
+            return back()->with('success', $result->message)->with('file',$fileName);
         }
         else{
-            return back()->with('error', 'Your certificate is not original')->with('file',$fileName);
+            return back()->with('error', $result->message)->with('file',$fileName);
         }
+
+        // echo $content; 
+        // echo $result->status;
+        // echo "<br>".$result->message_digest;
 
     }
 
@@ -128,13 +127,17 @@ class SignatureController extends Controller
             ]
         ]);
 
-        echo $request->file_id;
-        echo "<br>".$request->file_name;
-        echo "<br>".$content;
-
         $bodyresponcs = $response->getBody();
         $result = json_decode($bodyresponcs);
-        print_r($result->status);
+        if($result->status == 200){
+            $data_file = data_file::find($request->file_id);
+            $data_file->status = "Done";
+            $data_file->save();
+            return back()->with('success',"Success for generate signature of this file");
+        }
+        else{
+            return back()->with('error',"Fail for generate signature of this file");
+        }
 
     }
 
@@ -211,27 +214,6 @@ class SignatureController extends Controller
         }
   
         return $fpdi->Output($outputFilePath, 'F');
-    }
-
-    function encryptData($data) {
-        $rsa = new \Crypt_RSA();
-        $keys = $rsa->createKey();
-        $privateKey = $keys['privatekey'];
-        $rsa->loadKey($privateKey);
-        $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
-        $output = $rsa->encrypt($data);
-        return base64_encode($output);
-    }
-
-    function decryptData($data) {
-        $rsa = new \Crypt_RSA();
-        $keys = $rsa->createKey();
-        $publicKey = $keys['publickey'];
-        $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
-        $ciphertext = base64_decode($data);
-        $rsa->loadKey($publicKey);
-        $output = $rsa->decrypt($ciphertext);
-        return $output;
     }
 
 }

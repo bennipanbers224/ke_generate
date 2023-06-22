@@ -13,6 +13,7 @@ class data_file extends Model
 
     protected $fillable = [
         'user_id',
-        'file_name'
+        'file_name',
+        'status'
     ];
 }

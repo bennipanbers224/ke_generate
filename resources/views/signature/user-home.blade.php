@@ -47,6 +47,7 @@
                     <tr>
                     <th scope="col">No</th>
                     <th scope="col">File</th>
+                    <th scope="col">Status</th>
                     <th scope="col" colspan="2">Action</th>
                     </tr>
                 </thead>
@@ -55,6 +56,11 @@
                         <tr>
                             <th scope="row">{{$data->id}}</th>
                             <td>{{$data->file_name}}</td>
+                            @if($data->status == "Requested")
+                            <td class="text-info">{{$data->status}}</td>
+                            @else
+                            <td class="text-success">{{$data->status}}</td>
+                            @endif
                             <td><a href="/detail/{{$data->id}}"><button type="button" class="btn btn-success">Detail</button></a></td>
                         </tr>
                     @endforeach

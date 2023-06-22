@@ -50,33 +50,30 @@
             <span class="sr-only">Loading...</span>
         </div>
     </div>
-    <!-- Spinner End -->
-
-
-    <!-- Topbar Start -->
-    <div class="container-fluid bg-dark p-0">
-        <div class="row gx-0 d-none d-lg-flex">
-            <div class="col-lg-7 px-5 text-start">
-                <div class="h-100 d-inline-flex align-items-center me-4">
-                    <small class="fa fa-map-marker-alt text-primary me-2"></small>
-                    <small>Hi, {{ auth()->user()->name }}</small>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Topbar End -->
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-auto bg-light sticky-top" style = "width:30%;">
                 <div class="d-flex flex-sm-column flex-row flex-nowrap bg-light align-items-center sticky-top">
-                    <a href="/" class="d-block p-3 link-dark text-decoration-none" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
-                        <i class="bi-bootstrap fs-1"></i>
-                    </a>
+                <br>
+                <div class="profile-userpic">
+					<img style="width : 100px; height:100px;" src="{{asset('images/user.png')}}" class="img-responsive" alt="">
+				</div>
+				<div class="profile-usertitle">
+					<div class="profile-usertitle-name" style="text-align: center;">
+                    {{auth()->user()->name}}
+					</div>
+					<div class="profile-usertitle-job" style="text-align: center;">
+                    {{auth()->user()->status}}
+					</div>
+				</div>
+				<div class="profile-userbuttons">
+					<a href="/logout"><button type="button" class="btn btn-danger btn-sm">Logout</button></a>
+				</div>
                     @if(auth()->user()->status == 'Admin')
                         <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
                             <li class="nav-item">
-                                <a href="/toGenerate" class="nav-link py-5 px-5" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
+                                <a href="/" class="nav-link py-5 px-5" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
                                     <div class="card" style="width: 200px; height:150px;">
                                         <img src="{{asset('images/sign.png')}}" class="card-img-top" alt="..." style="width: 200px; height:150px;">
                                         <div class="card-body">
@@ -101,7 +98,7 @@
                         <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
                             
                             <li class="nav-item">
-                                <a href="/toGenerate" class="nav-link py-5 px-5" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
+                                <a href="/" class="nav-link py-5 px-5" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
                                     <div class="card" style="width: 200px; height:150px;">
                                         <img src="{{asset('images/sign.png')}}" class="card-img-top" alt="..." style="width: 200px; height:150px;">
                                         <div class="card-body">
