@@ -13,7 +13,7 @@
 
         <?php $file = $data['file_name']; ?>
         <div class="container">
-            <iframe width="850px" height="600px" src='{{asset("upload/{$data["file_name"]}")}}'></iframe>
+            <iframe style="width:100%;" height="600px" src='{{asset("upload/{$data["file_name"]}")}}'></iframe>
 
             <table class="table">
                 <thead>

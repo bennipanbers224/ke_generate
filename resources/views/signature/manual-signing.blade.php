@@ -38,7 +38,7 @@
                                 <strong>{{ $message }}</strong>
                         </div>
                         <?php $filename = Session::get('file');?>
-                        <iframe width="850px" height="600px" src='{{asset("upload/{$filename}")}}'></iframe>
+                        <iframe style="width:100%;" height="600px" src='{{asset("upload/{$filename}")}}'></iframe>
                         @endif
                 
                     </div>
