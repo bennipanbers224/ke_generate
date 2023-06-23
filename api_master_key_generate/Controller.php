@@ -11,9 +11,9 @@ class Controller {
         $this->conn = $db->connect();
     }
  
-    public function simpanData($publicKey, $privateKey, $message_digest, $signature, $file_id) { 
-        $stmt = $this->conn->prepare("INSERT INTO key_generate(`private_key`, `public_key`, `message_digest`, `signature`, `file_id`) VALUES(?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $privateKey, $publicKey, $message_digest, $signature, $file_id);
+    public function simpanData($publicKey, $privateKey, $message_digest, $signature, $nim) { 
+        $stmt = $this->conn->prepare("INSERT INTO key_generate(`private_key`, `public_key`, `message_digest`, `signature`, `nim`) VALUES(?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssi", $privateKey, $publicKey, $message_digest, $signature, $nim);
         $result = $stmt->execute();
         $stmt->close();
 
@@ -32,16 +32,19 @@ class Controller {
             $file_data = $stmt->get_result()->fetch_assoc();
             $stmt->close();
 
-            if($message_digest == $file_data["message_digest"]){
-                return "success";
-            }
-            else{
-                return "error";
+            if($file_data != NULL){
+                if($message_digest == $file_data["message_digest"]){    
+                    return $file_data;
+                }else{
+                    return false;
+                }
+            }else{
+                return false;
             }
 
         }
         else{
-            return "error";
+            return NULL;
         }
     }
  

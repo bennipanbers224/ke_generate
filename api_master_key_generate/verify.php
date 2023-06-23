@@ -9,11 +9,11 @@
         $data = $_POST['data'];
         $message_digest = md5($data);
      
-        $store = $db->verification($message_digest);
-            if ($store == "success") {
+        $file = $db->verification($message_digest);
+            if ($file) {
                 $response["status"] = 200;
                 $response["message"] = "File is fully original";
-                $response["message_digest"] = $message_digest;
+                $response["nim"] = $file["nim"];
                 echo json_encode($response);
             } else {
                 $response["error"] = TRUE;

@@ -16,10 +16,10 @@
 
      $publicKey = openssl_pkey_get_details($keyPair)['key'];
     
-    if (isset($_POST['data']) && isset($_POST['file_id'])) {
+    if (isset($_POST['data']) && isset($_POST['nim'])) {
 
         $data = $_POST['data'];
-        $file_id = $_POST['file_id'];
+        $nim = $_POST['nim'];
         $message_digest = md5($data);
         openssl_private_encrypt($message_digest, $encryted, $privKey);
         $encrypt = bin2hex($encryted);
@@ -29,14 +29,14 @@
         $privateKey = $privKey;
         $signature = $encrypt;
      
-        $store = $db->simpanData($publicKey, $privateKey, $message_digest, $signature, $file_id);
+        $store = $db->simpanData($publicKey, $privateKey, $message_digest, $signature, $nim);
             if ($store) {
                 $response["status"] = 200;
                 $response["publicKey"] = $publicKey;
                 $response["privateKey"] = $privateKey;
                 $response["message_digest"] = $message_digest;
                 $response["signature"] = $signature;
-                $response["file_id"] = $file_id;
+                $response["nim"] = $nim;
                 
                 echo json_encode($response);
             } else {
