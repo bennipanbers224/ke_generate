@@ -4,7 +4,7 @@
 
         <div class="container">
             <div class="panel panel-primary">
-                    <div class="panel-heading"><h2>Upload file for request signature</h2></div>
+                    <div class="panel-heading"><h2>Upload file for manual signing</h2></div>
                     <div class="panel-body">
                 
                         @if (count($errors) > 0)
@@ -18,7 +18,7 @@
                             </div>
                         @endif  
                 
-                        <form action="/file-post" method="POST" enctype="multipart/form-data">
+                        <form action="/manual-signing" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                     
@@ -37,6 +37,8 @@
                         <div class="alert alert-success alert-block" style="width: 500px;">
                                 <strong>{{ $message }}</strong>
                         </div>
+                        <?php $filename = Session::get('file');?>
+                        <iframe width="850px" height="600px" src='{{asset("upload/{$filename}")}}'></iframe>
                         @endif
                 
                     </div>
@@ -47,7 +49,6 @@
                     <tr>
                     <th scope="col">No</th>
                     <th scope="col">File</th>
-                    <th scope="col">Status</th>
                     <th scope="col" colspan="2">Action</th>
                     </tr>
                 </thead>
@@ -56,12 +57,7 @@
                         <tr>
                             <th scope="row">{{$data->id}}</th>
                             <td>{{$data->file_name}}</td>
-                            @if($data->status == "Requested")
-                            <td class="text-info">{{$data->status}}</td>
-                            @else
-                            <td class="text-success">{{$data->status}}</td>
-                            @endif
-                            <td><a href="/detail/{{$data->id}}/not-manual"><button type="button" class="btn btn-success">Detail</button></a></td>
+                            <td><a href="/detail/{{$data->id}}/manual"><button type="button" class="btn btn-success">Detail</button></a></td>
                         </tr>
                     @endforeach
                 </tbody>

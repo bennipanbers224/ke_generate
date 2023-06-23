@@ -39,14 +39,6 @@
        <div class="alert alert-success alert-block">
                <strong>{{ $message }}</strong>
        </div>
-       <?php $data =  Session::get('data'); ?>
-       <table class="table table-striped">
-            <tbody>
-                <tr>
-                    <td>This file is verified by {{$data['name']}}</td>
-                </tr>
-            </tbody>
-        </table>
         @elseif($message = Session::get('error'))
         <iframe width="850px" height="500px" src="verify_file/{{ Session::get('file') }}"></iframe>
         <div class="alert alert-danger alert-block">

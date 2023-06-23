@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\data_file;
+use App\Models\manual_files;
 use Smalot\PdfParser\Parser;
 use setasign\Fpdi\Tcpdf\Fpdi;
 use PDF;
@@ -64,11 +65,19 @@ class SignatureController extends Controller
         return back()->with('success', 'success for generate signature')->with('file',$fileName);
     }
 
-    public function detail($id){
-        $data = data_file::select('data_files.id', 'data_files.file_name', 'data_files.status as status_file', 'users.name', 'users.status')
+    public function detail($id, $type){
+        if($type == "manual"){
+            $data = manual_files::select('manual_files.id', 'manual_files.file_name', 'manual_files.status as status_file', 'users.name', 'users.status')
+                ->join("users", "manual_files.user_id", "=", "users.id")->where("manual_files.id", "=", $id)->first();
+            
+                return view('signature.detail')->with(compact('data'));
+        }
+        else{
+            $data = data_file::select('data_files.id', 'data_files.file_name', 'data_files.status as status_file', 'users.name', 'users.status')
                 ->join("users", "data_files.user_id", "=", "users.id")->where("data_files.id", "=", $id)->first();
-
-        return view('signature.detail')->with(compact('data'));
+                
+                return view('signature.detail')->with(compact('data'));
+        }
     }
 
     public function getVerificationResult(Request $request){
@@ -139,6 +148,50 @@ class SignatureController extends Controller
             return back()->with('error',"Fail for generate signature of this file");
         }
 
+    }
+
+    public function manual(){
+        $data = manual_files::all();
+        return view ('signature.manual-signing')->with(compact('data'));
+    }
+
+    public function manualSigning(Request $request){
+        $request->validate([
+            'file' => 'required|mimes:pdf|max:2048',
+        ]);
+  
+        $fileName = time().'.'.$request->file->extension();  
+   
+        $request->file->move(public_path('upload'), $fileName);
+
+        $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
+
+        $pdfParser = new Parser();
+        $pdf = $pdfParser->parseFile(public_path('upload/'.$fileName));
+
+        $content = $pdf->getText();
+
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('POST', 'http://localhost:80/api_master_key_generate/generate.php', [
+            'form_params' => [
+                'data' => $content,
+                'file_id' => 0,
+            ]
+        ]);
+
+        $bodyresponcs = $response->getBody();
+        $result = json_decode($bodyresponcs);
+        if($result->status == 200){
+            $data = manual_files::create([
+                'file_name'=>$fileName,
+                'status'=>"Done",
+                'user_id'=>auth()->user()->id
+            ]);
+            return back()->with('success',"Success for generate signature of this file")->with('file',$fileName);
+        }
+        else{
+            return back()->with('error',"Fail for generate signature of this file")->with('file',$fileName);
+        }
     }
 
     /**

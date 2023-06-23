@@ -4,11 +4,26 @@
 
         <div class="container">
 
-        <div role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-outline-primary">Request</button>
-            <button type="button" class="btn btn-outline-success">Done</button>
+        <div class="d-flex h-100">
+            <div class="align-self-start mr-auto">
+                <button type="button" class="btn btn-outline-info">
+                  Requested
+                </button>
+            </div>
+            <div class="align-self-center mx-auto">
+                <button type="button" class="btn btn-outline-success">
+                  Done
+                </button>
+            </div>
+            <div class="align-self-end ml-auto">
+                <a href="/manual">
+                    <button type="button" class="btn btn-outline-secondary">
+                        Manual Signing
+                    </button>
+                </a>
+            </div>
         </div>
-
+            
             <table class="table">
                 <thead>
                     <tr>
@@ -32,7 +47,7 @@
                             @else
                             <td class="text-success">{{$data->status_file}}</td>
                             @endif
-                            <td><a href="/detail/{{$data->id}}"><button type="button" class="btn btn-success">Detail</button></a></td>
+                            <td><a href="/detail/{{$data->id}}/not-manual"><button type="button" class="btn btn-success">Detail</button></a></td>
                         </tr>
                     @endforeach
                 </tbody>
