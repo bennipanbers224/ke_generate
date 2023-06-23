@@ -15,9 +15,10 @@ class CreateDataFilesTable extends Migration
     {
         Schema::create('data_files', function (Blueprint $table) {
             $table->id();
-            $table->string("user_id");
-            $table->string("file_name");
-            $table->string("status");
+            $table->string("name");
+            $table->string("nim");
+            $table->string("major");
+            $table->string("file");
             $table->timestamps();
         });
     }

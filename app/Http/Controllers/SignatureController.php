@@ -47,38 +47,6 @@ class SignatureController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:pdf|max:2048',
-        ]);
-  
-        $fileName = time().'.'.$request->file->extension();  
-   
-        $request->file->move(public_path('upload'), $fileName);
-              
-        $data = data_file::create([
-            'user_id'=>auth()->user()->id,
-            'file_name'=>$fileName,
-            'status'=>"Requested",
-        ]);
-        return back()->with('success', 'success for generate signature')->with('file',$fileName);
-    }
-
-    public function detail($id, $type){
-        if($type == "manual"){
-            $data = manual_files::select('manual_files.id', 'manual_files.file_name', 'manual_files.status as status_file', 'users.name', 'users.status')
-                ->join("users", "manual_files.user_id", "=", "users.id")->where("manual_files.id", "=", $id)->first();
-            
-                return view('signature.detail')->with(compact('data'));
-        }
-        else{
-            $data = data_file::select('data_files.id', 'data_files.file_name', 'data_files.status as status_file', 'users.name', 'users.status')
-                ->join("users", "data_files.user_id", "=", "users.id")->where("data_files.id", "=", $id)->first();
-                
-                return view('signature.detail')->with(compact('data'));
-        }
-    }
 
     public function getVerificationResult(Request $request){
 
@@ -105,92 +73,79 @@ class SignatureController extends Controller
         $bodyresponcs = $response->getBody();
         $result = json_decode($bodyresponcs);
         if($result->message == "File is fully original"){
-            return back()->with('success', $result->message)->with('file',$fileName);
+
+            $result = data_file::where('nim', '=', $result->nim)->first();
+
+            return back()->with('success', "File is fully original")->with('file',$fileName)->with(compact('result'));
         }
         else{
-            return back()->with('error', $result->message)->with('file',$fileName);
+            return back()->with('error', "File not original")->with('file',$fileName);
         }
 
-        // echo $content; 
-        // echo $result->status;
-        // echo "<br>".$result->message_digest;
-
-    }
-
-    public function signing(Request $request){
-
-        $fileName = $request->file_name;
-
-        $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
-
-        $pdfParser = new Parser();
-        $pdf = $pdfParser->parseFile(public_path('upload/'.$fileName));
-
-        $content = $pdf->getText();
-
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', 'http://localhost:80/api_master_key_generate/generate.php', [
-            'form_params' => [
-                'data' => $content,
-                'file_id' => $request->file_id,
-            ]
-        ]);
-
-        $bodyresponcs = $response->getBody();
-        $result = json_decode($bodyresponcs);
-        if($result->status == 200){
-            $data_file = data_file::find($request->file_id);
-            $data_file->status = "Done";
-            $data_file->save();
-            return back()->with('success',"Success for generate signature of this file");
-        }
-        else{
-            return back()->with('error',"Fail for generate signature of this file");
-        }
-
-    }
-
-    public function manual(){
-        $data = manual_files::all();
-        return view ('signature.manual-signing')->with(compact('data'));
     }
 
     public function manualSigning(Request $request){
-        $request->validate([
-            'file' => 'required|mimes:pdf|max:2048',
-        ]);
-  
-        $fileName = time().'.'.$request->file->extension();  
-   
-        $request->file->move(public_path('upload'), $fileName);
+        $fileName = $request->nim.'.'.$request->file->extension();
 
-        $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
+        $result = data_file::where('nim', '=', $request->nim)->get();
 
-        $pdfParser = new Parser();
-        $pdf = $pdfParser->parseFile(public_path('upload/'.$fileName));
-
-        $content = $pdf->getText();
-
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', 'http://localhost:80/api_master_key_generate/generate.php', [
-            'form_params' => [
-                'data' => $content,
-                'file_id' => 0,
-            ]
-        ]);
-
-        $bodyresponcs = $response->getBody();
-        $result = json_decode($bodyresponcs);
-        if($result->status == 200){
-            $data = manual_files::create([
-                'file_name'=>$fileName,
-                'status'=>"Done",
-                'user_id'=>auth()->user()->id
+        if(count($result)>0){
+            $data = data_file::create([
+                'name'=>$request->name,
+                'nim'=>$request->nim,
+                'major'=>$request->major,
+                'file'=>$fileName,
             ]);
-            return back()->with('success',"Success for generate signature of this file")->with('file',$fileName);
+    
+            $data['name'] = $request->name;
+            $data['nim'] = $request->nim;
+            $data['major'] = $request->major;
+    
+            return back()->with('error',"This Data has been exist")->with('file',$fileName)->with(compact('data'));
         }
         else{
-            return back()->with('error',"Fail for generate signature of this file")->with('file',$fileName);
+
+            $request->file->move(public_path('upload'), $fileName);
+
+            $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
+
+            $pdfParser = new Parser();
+            $pdf = $pdfParser->parseFile(public_path('upload/'.$fileName));
+
+            $content = $pdf->getText();
+
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('POST', 'http://localhost:80/api_master_key_generate/generate.php', [
+                'form_params' => [
+                    'data' => $content,
+                    'nim' => $request->nim,
+                ]
+            ]);
+
+            $bodyresponcs = $response->getBody();
+            $result = json_decode($bodyresponcs);
+            if($result->status == 200){
+                $data = data_file::create([
+                    'name'=>$request->name,
+                    'nim'=>$request->nim,
+                    'major'=>$request->major,
+                    'file'=>$fileName,
+                ]);
+        
+                $data['name'] = $request->name;
+                $data['nim'] = $request->nim;
+                $data['major'] = $request->major;
+        
+                return back()->with('success',"Success for generate signature of this file")->with('file',$fileName)->with(compact('data'));
+            }
+            else{
+
+                $data['name'] = $request->name;
+                $data['nim'] = $request->nim;
+                $data['major'] = $request->major;
+
+                return back()->with('error',"Fail for generate signature of this file")->with('file',$fileName)->with(compact('data'));
+            }
         }
     }
 

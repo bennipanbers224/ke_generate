@@ -96,18 +96,6 @@
                         </ul>
                     @else
                         <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
-                            
-                            <li class="nav-item">
-                                <a href="/" class="nav-link py-5 px-5" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
-                                    <div class="card" style="width: 200px; height:150px;">
-                                        <img src="{{asset('images/sign.png')}}" class="card-img-top" alt="..." style="width: 200px; height:150px;">
-                                        <div class="card-body">
-                                            <p class="card-text">File For Signing</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <br><br>
                             <li>
                                 <a href="/toVerify" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
                                     <div class="card" style="width: 200px; height:150px;">
@@ -145,6 +133,25 @@
 
     <!-- Template Javascript -->
     <script src="{{asset('js/main.js')}}"></script>
+    <script src="{{asset('js/sweetalert.min.js')}}"></script>
 </body>
+
+<script type="text/javascript">
+    $('.submit-confirm').on('click', function (e) {
+        e.preventDefault();
+        const url = $(this).attr('href');
+        swal({
+            title: 'Are you sure?',
+            text: 'This record and it`s details will be permanantly deleted!',
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function(value) {
+            if (value) {
+                window.location.href = url;
+            }
+        });
+    });
+  
+</script>
 
 </html>

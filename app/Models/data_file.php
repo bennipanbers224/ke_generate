@@ -12,8 +12,9 @@ class data_file extends Model
     protected $table = 'data_files';
 
     protected $fillable = [
-        'user_id',
-        'file_name',
-        'status'
+        'name',
+        'nim',
+        'major',
+        'file'
     ];
 }

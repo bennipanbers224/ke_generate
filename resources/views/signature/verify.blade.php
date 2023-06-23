@@ -18,32 +18,49 @@
            </div>
        @endif
  
-       <form action="/verify-file" method="POST" enctype="multipart/form-data">
+       <form action="/verify-file" style ="width:100%" method="POST" enctype="multipart/form-data">
            @csrf
-           <div class="row">
- 
-               <div class="col-md-6">
-                   <input type="file" name="file" class="form-control">
-               </div>
+
+           <div class="form-group files">
+                <label>Upload Your File : </label>
+                <input type="file" class="form-control" name="file">
+            </div>
+            <br>
   
-               <div class="col-md-6">
-                   <button type="submit" class="btn btn-success">Verify</button>
-               </div>
-  
-           </div>
+            <div style ="width:100%" class="col-md-6">
+                <button style ="width:100%" type="submit" class="btn btn-outline-info">Verify</button>
+            </div>
+
        </form>
        <br><br>
 
        @if ($message = Session::get('success'))
-       <iframe width="850px" height="500px" src="verify_file/{{ Session::get('file') }}"></iframe>
-       <div class="alert alert-success alert-block">
-               <strong>{{ $message }}</strong>
-       </div>
+            <div class="alert alert-success alert-block">
+                    <strong>{{ $message }}</strong>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">NIM</th>
+                        <th scope="col">Major</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php $result = Session::get('result');?>
+                    <tr>
+                        <th scope="row">{{$result['name']}}</th>
+                        <td>{{$result['nim']}}</td>
+                        <td>{{$result['major']}}</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <iframe width="850px" height="500px" src="verify_file/{{ Session::get('file') }}"></iframe>
         @elseif($message = Session::get('error'))
-        <iframe width="850px" height="500px" src="verify_file/{{ Session::get('file') }}"></iframe>
-        <div class="alert alert-danger alert-block">
-                <strong>{{ $message }}</strong>
-        </div>
+            <div class="alert alert-danger alert-block">
+                    <strong>{{ $message }}</strong>
+            </div>
+            <iframe style ="width:100%" height="500px" src="verify_file/{{ Session::get('file') }}"></iframe>
        @endif
  
      </div>

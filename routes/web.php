@@ -63,31 +63,16 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('/', function () {
             // return view('signature.signature');
             if(Auth::user()->status == "Admin"){
-                $data = data_file::select('data_files.id', 'data_files.file_name', 'data_files.status as status_file', 'users.name', 'users.status')
-                ->join("users", "data_files.user_id", "=", "users.id")->get();
-
-                return view("signature.signature")->with(compact("data"));
+                return view("signature.signature");
             }else{
-
-                $data = data_file::where("user_id","=", Auth::user()->id)->get();
-
-                return view("signature.user-home")->with(compact("data"));
+                return view("signature.user-home");
             }
         });
         
         // Route::resource('signature', SignatureController::class);
-        
-        Route::get('generate-pdf', [SignatureController::class, 'generatePDF']);
-        Route::post('/file-post', [SignatureController::class, 'store']);
-        
-        Route::get('/toGenerate', [SignatureController::class, 'generateKey']);
         Route::get('/toVerify', [SignatureController::class, 'verify']);
         Route::post('/verify-file',[SignatureController::class, 'getVerificationResult']);
         Route::get('/logout', 'LogoutController@perform')->name('logout.perform');
-        Route::get('/detail/{id}/{type}', [SignatureController::class, 'detail']);
-        Route::post('/signing',[SignatureController::class, 'signing']);
-        Route::get('/profile',[UserController::class, 'profile']);
-        Route::get('/manual', [SignatureController::class, 'manual']);
         Route::post('/manual-signing', [SignatureController::class, 'manualSigning']);
     });
 });
