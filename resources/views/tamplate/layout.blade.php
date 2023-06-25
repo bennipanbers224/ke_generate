@@ -63,14 +63,11 @@
 					<div class="profile-usertitle-name" style="text-align: center;">
                     {{auth()->user()->name}}
 					</div>
-					<div class="profile-usertitle-job" style="text-align: center;">
-                    {{auth()->user()->status}}
-					</div>
 				</div>
 				<div class="profile-userbuttons">
 					<a href="/logout"><button type="button" class="btn btn-danger btn-sm">Logout</button></a>
 				</div>
-                    @if(auth()->user()->status == 'Admin')
+                    @if(auth()->user()->status == 'Instansi')
                         <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
                             <li class="nav-item">
                                 <a href="/" class="nav-link py-5 px-5" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">

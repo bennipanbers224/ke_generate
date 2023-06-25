@@ -5,7 +5,7 @@
         <form method="post" action="/loginPost">
             
             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-            <img src="{{asset('images/sign.png')}}" class="card-img-top" alt="..." style="width: 200px; height:150px;">
+            <img src="{{asset('images/logo.png')}}" class="card-img-top" alt="..." style="width: 200px; height:100px;">
             
             <h1 class="h3 mb-3 fw-normal">Login</h1>
 
@@ -29,7 +29,7 @@
 
             <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
             
-            <p>Tidak memiliki akun? </p><a href="/register">Daftar disini</a>
+            <p>Don't have account? </p><a href="/register">Sign up here</a>
         </form>
     </div>
 @endsection

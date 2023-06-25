@@ -5,7 +5,7 @@
         <form method="post" action="/registerPost">
 
             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-            <img class="mb-4" src="{!! url('images/bootstrap-logo.svg') !!}" alt="" width="72" height="57">
+            <img src="{{asset('images/logo.png')}}" class="card-img-top" alt="..." style="width: 200px; height:100px;">
 
             <h1 class="h3 mb-3 fw-normal">Register</h1>
 
@@ -50,17 +50,12 @@
             </div>
 
             <div class="form-group form-floating mb-3">
-                <select name="status" class="form-control">
-                    <option value="Mahasiswa" selected="selected">Mahasiswa</option>
-                    <option value="Karyawan">Karyawan</option>
-                </select>
-                <label for="floatingName">Status</label>
-                @if ($errors->has('status'))
-                    <span class="text-danger text-left">{{ $errors->first('status') }}</span>
-                @endif
+                <input type="hidden" class="form-control" name="status" placeholder="status" value="Public" required="required">
             </div>
 
             <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+
+            <p>Have account? </p><a href="/login">Login here</a>
 
             @include('auth.copy')
 

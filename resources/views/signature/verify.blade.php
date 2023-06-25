@@ -38,23 +38,6 @@
             <div class="alert alert-success alert-block">
                     <strong>{{ $message }}</strong>
             </div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">NIM</th>
-                        <th scope="col">Major</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php $result = Session::get('result');?>
-                    <tr>
-                        <th scope="row">{{$result['name']}}</th>
-                        <td>{{$result['nim']}}</td>
-                        <td>{{$result['major']}}</a></td>
-                    </tr>
-                </tbody>
-            </table>
             <iframe width="850px" height="500px" src="verify_file/{{ Session::get('file') }}"></iframe>
         @elseif($message = Session::get('error'))
             <div class="alert alert-danger alert-block">
