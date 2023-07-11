@@ -76,7 +76,7 @@
 
                         <br><br>
                         @if ($message = Session::get('success'))
-                        <div class="alert alert-success alert-block" style="width: 500px;">
+                        <div class="alert alert-success alert-block" style="width: 100%;">
                                 <strong>{{ $message }}</strong>
                         </div>
                             <?php $filename = Session::get('file');?>
@@ -99,7 +99,7 @@
                             </table>
                             <iframe style="width:100%;" height="600px" src='{{asset("upload/{$filename}")}}'></iframe>
                         @elseif($message = Session::get('error'))
-                            <div class="alert alert-danger alert-block" style="width: 500px;">
+                            <div class="alert alert-danger alert-block" style="width: 100%;">
                                     <strong>{{ $message }}</strong>
                             </div>
                             <?php $filename = Session::get('file');?>

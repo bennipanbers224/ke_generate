@@ -86,67 +86,88 @@ class SignatureController extends Controller
 
     public function manualSigning(Request $request){
         $fileName = $request->nim.'.'.$request->file->extension();
+        
+        $pdfParser = new Parser();
+        $pdf = $pdfParser->parseFile($request->file);
 
-        $result = data_file::where('nim', '=', $request->nim)->get();
+        $content = $pdf->getText();
 
-        if(count($result)>0){
-            $data = data_file::create([
-                'name'=>$request->name,
-                'nim'=>$request->nim,
-                'major'=>$request->major,
-                'file'=>$fileName,
-            ]);
-    
-            $data['name'] = $request->name;
-            $data['nim'] = $request->nim;
-            $data['major'] = $request->major;
-    
-            return back()->with('error',"This Data has been exist")->with('file',$fileName)->with(compact('data'));
+        // echo $content;
+
+        $substring_index = strpos($content, "Dengan predikat");
+
+        if($substring_index !== FALSE){
+            echo "true";
         }
         else{
-
-            $request->file->move(public_path('upload'), $fileName);
-
-            $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
-
-            $pdfParser = new Parser();
-            $pdf = $pdfParser->parseFile(public_path('upload/'.$fileName));
-
-            $content = $pdf->getText();
-
-            $client = new \GuzzleHttp\Client();
-            $response = $client->request('POST', 'http://localhost:80/api_master_key_generate/generate.php', [
-                'form_params' => [
-                    'data' => $content,
-                    'nim' => $request->nim,
-                ]
-            ]);
-
-            $bodyresponcs = $response->getBody();
-            $result = json_decode($bodyresponcs);
-            if($result->status == 200){
-                $data = data_file::create([
-                    'name'=>$request->name,
-                    'nim'=>$request->nim,
-                    'major'=>$request->major,
-                    'file'=>$fileName,
-                ]);
-        
-                $data['name'] = $request->name;
-                $data['nim'] = $request->nim;
-                $data['major'] = $request->major;
-        
-                return back()->with('success',"Success for generate signature of this file")->with('file',$fileName)->with(compact('data'));
-            }
-            else{
-
-                $data['name'] = $request->name;
-                $data['nim'] = $request->nim;
-                $data['major'] = $request->major;
-
-                return back()->with('error',"Fail for generate signature of this file")->with('file',$fileName)->with(compact('data'));
-            }
+            echo "false";
         }
+
+        // echo $substring_index;
+
+        // if(str_contains($content, "telah menyelesaikan studi") && str_contains($content, "kepadanya di berikan gelar") && str_contains($content, "Dengan predikat")){
+        //     if(count($result)>0){
+        //         $result = data_file::where('nim', '=', $request->nim)->get();
+        //         $data = data_file::create([
+        //             'name'=>$request->name,
+        //             'nim'=>$request->nim,
+        //             'major'=>$request->major,
+        //             'file'=>$fileName,
+        //         ]);
+        
+        //         $data['name'] = $request->name;
+        //         $data['nim'] = $request->nim;
+        //         $data['major'] = $request->major;
+        
+        //         return back()->with('error',"This Data has been exist")->with('file',$fileName)->with(compact('data'));
+        //     }
+        //     else{
+    
+        //         $request->file->move(public_path('upload'), $fileName);
+    
+        //         $this->fillPDFFile(public_path('upload/'.$fileName), public_path('upload/'.$fileName), $fileName);
+    
+                
+    
+        //         $client = new \GuzzleHttp\Client();
+        //         $response = $client->request('POST', 'http://localhost:80/api_master_key_generate/generate.php', [
+        //             'form_params' => [
+        //                 'data' => $content,
+        //                 'nim' => $request->nim,
+        //             ]
+        //         ]);
+    
+        //         $bodyresponcs = $response->getBody();
+        //         $result = json_decode($bodyresponcs);
+        //         if($result->status == 200){
+        //             $data = data_file::create([
+        //                 'name'=>$request->name,
+        //                 'nim'=>$request->nim,
+        //                 'major'=>$request->major,
+        //                 'file'=>$fileName,
+        //             ]);
+            
+        //             $data['name'] = $request->name;
+        //             $data['nim'] = $request->nim;
+        //             $data['major'] = $request->major;
+            
+        //             return back()->with('success',"Success for generate signature of this file")->with('file',$fileName)->with(compact('data'));
+        //         }
+        //         else{
+    
+        //             $data['name'] = $request->name;
+        //             $data['nim'] = $request->nim;
+        //             $data['major'] = $request->major;
+    
+        //             return back()->with('error',"Fail for generate signature of this file")->with('file',$fileName)->with(compact('data'));
+        //         }
+        //     }
+        // }else{
+        //     $data['name'] = $request->name;
+        //     $data['nim'] = $request->nim;
+        //     $data['major'] = $request->major;
+        //     return back()->with('error',"Fail for generate signature of this file")->with('file',$fileName)->with(compact('data'));
+        // }
     }
 
     /**

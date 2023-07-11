@@ -56,10 +56,11 @@
             <div class="col-sm-auto bg-light sticky-top" style = "width:30%;">
                 <div class="d-flex flex-sm-column flex-row flex-nowrap bg-light align-items-center sticky-top">
                 <br>
+                @auth
                 <div class="profile-userpic">
 					<img style="width : 100px; height:100px;" src="{{asset('images/user.png')}}" class="img-responsive" alt="">
 				</div>
-				<div class="profile-usertitle">
+                <div class="profile-usertitle">
 					<div class="profile-usertitle-name" style="text-align: center;">
                     {{auth()->user()->name}}
 					</div>
@@ -67,7 +68,8 @@
 				<div class="profile-userbuttons">
 					<a href="/logout"><button type="button" class="btn btn-danger btn-sm">Logout</button></a>
 				</div>
-                    @if(auth()->user()->status == 'Instansi')
+                @endauth
+                    @auth 
                         <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
                             <li class="nav-item">
                                 <a href="/" class="nav-link py-5 px-5" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
@@ -91,7 +93,8 @@
                                 </a>
                             </li>
                         </ul>
-                    @else
+                    @endauth
+                    @guest
                         <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
                             <li>
                                 <a href="/toVerify" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
@@ -104,7 +107,7 @@
                                 </a>
                             </li>
                         </ul>
-                    @endif
+                    @endguest
                 </div>
             </div>
             <div class="col-sm p-3 min-vh-100">

@@ -18,29 +18,30 @@ use App\Models\data_file;
 |
 */
 
+
+
+
 Route::group(['namespace' => 'App\Http\Controllers'], function()
 {   
     /**
      * Home Routes
      */
-
-
-     Route::get('/', function () {
-        return view('auth.login');
-    });
-
     Route::group(['middleware' => ['guest']], function() {
         /**
          * Register Routes
          */
 
 
-        Route::get('/register', [RegisterController::class,'show']);
-        Route::post('/registerPost', [RegisterController::class,'register']);
+        // Route::get('/register', [RegisterController::class,'show']);
+        // Route::post('/registerPost', [RegisterController::class,'register']);
 
         /**
          * Login Routes
          */
+
+        Route::get('/', function () {
+            return view("signature.user-home");
+        })->name('home');
 
         Route::get('/login', [LoginController::class,'show'])->name('login');
         Route::post('/loginPost', [LoginController::class, 'login']);
@@ -60,14 +61,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         //     }
         // }
         
-        Route::get('/', function () {
-            // return view('signature.signature');
-            if(Auth::user()->status == "Admin"){
-                return view("signature.signature");
-            }else{
-                return view("signature.user-home");
-            }
-        });
+        // Route::get('/', function () {
+        //     return view("signature.user-home");
+        // })->name('home');
         
         // Route::resource('signature', SignatureController::class);
         Route::get('/toVerify', [SignatureController::class, 'verify']);
