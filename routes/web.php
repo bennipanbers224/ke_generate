@@ -26,25 +26,23 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     /**
      * Home Routes
      */
+    Route::get('/', function () {
+        return view("signature.user-home");
+    })->name('home');
     Route::group(['middleware' => ['guest']], function() {
         /**
          * Register Routes
          */
 
-
-        // Route::get('/register', [RegisterController::class,'show']);
-        // Route::post('/registerPost', [RegisterController::class,'register']);
-
         /**
          * Login Routes
          */
 
-        Route::get('/', function () {
-            return view("signature.user-home");
-        })->name('home');
-
-        Route::get('/login', [LoginController::class,'show'])->name('login');
+        Route::get('/instansi', [LoginController::class,'show'])->name('instansi');
         Route::post('/loginPost', [LoginController::class, 'login']);
+        Route::get('/register', [RegisterController::class,'show']);
+        Route::post('/registerPost', [RegisterController::class,'register']);
+        
 
     });
 
@@ -54,17 +52,13 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
          */
 
         // if(Auth::check()){
-        //     if(Auth::user()->status == "Admin"){
-        //         Route::get('/',[SignatureController::class, 'admin']);
-        //     }else{
-        //         Route::get('/',[SignatureController::class, 'user']);
+        //     if(Auth::user()->status == "Instansi"){
+        //         Route::get('/homeIntansi',[SignatureController::class, 'generateKey']);
         //     }
         // }
         
-        // Route::get('/', function () {
-        //     return view("signature.user-home");
-        // })->name('home');
         
+        Route::get('/homeInstansi',[SignatureController::class, 'generateKey']);
         // Route::resource('signature', SignatureController::class);
         Route::get('/toVerify', [SignatureController::class, 'verify']);
         Route::post('/verify-file',[SignatureController::class, 'getVerificationResult']);
@@ -72,4 +66,6 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::post('/manual-signing', [SignatureController::class, 'manualSigning']);
     });
 });
+
+
 

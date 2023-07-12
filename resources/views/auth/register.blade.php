@@ -55,7 +55,7 @@
 
             <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
 
-            <p>Have account? </p><a href="/login">Login here</a>
+            <p>Have account? </p><a href="/instansi">Login here</a>
 
             @include('auth.copy')
 

@@ -72,7 +72,7 @@
                     @auth 
                         <ul class="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
                             <li class="nav-item">
-                                <a href="/" class="nav-link py-5 px-5" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
+                                <a href="/homeInstansi" class="nav-link py-5 px-5" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
                                     <div class="card" style="width: 200px; height:150px;">
                                         <img src="{{asset('images/sign.png')}}" class="card-img-top" alt="..." style="width: 200px; height:150px;">
                                         <div class="card-body">
